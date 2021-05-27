@@ -1,6 +1,6 @@
 <template>
 	<view>
-		
+		<text>任务管理</text>
 	</view>
 </template>
 
