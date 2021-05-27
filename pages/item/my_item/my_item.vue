@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<text> 我的任务</text>
+		<text> 我的任务 </text>
 	</view>
 </template>
 
@@ -8,11 +8,11 @@
 	export default {
 		data() {
 			return {
-				
+
 			}
 		},
 		methods: {
-			
+
 		}
 	}
 </script>

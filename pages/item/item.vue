@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<text>任务管理</text>
+		<text>任务管理 </text>
 	</view>
 </template>
 
@@ -8,11 +8,11 @@
 	export default {
 		data() {
 			return {
-				
+
 			}
 		},
 		methods: {
-			
+
 		}
 	}
 </script>
