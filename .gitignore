@@ -1,0 +1,5 @@
+node_modules/
+unpackage/
+dev-script/
+uni-admin.param.json
+.hbuilderx/
