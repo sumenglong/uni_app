@@ -23,22 +23,33 @@
 		}
 	    ,{
             "path" : "pages/item/item",
-            "style" :                                                                                    
+            "style" :
             {
                 "navigationBarTitleText": "",
                 "enablePullDownRefresh": false
             }
-            
+
         }
         ,{
             "path" : "pages/item/my_item/my_item",
-            "style" :                                                                                    
+            "style" :
             {
                 "navigationBarTitleText": "",
                 "enablePullDownRefresh": false
             }
-            
+
         }
+		,{
+            "path" : "pages/item/detail",
+            "style" :
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+
+        }
+
+
     ],
 	"subPackages": [{
 		"root": "pages/system",
@@ -110,7 +121,28 @@
 			"style": {
 				"navigationBarTitleText": "用户管理"
 			}
-		}]
+		} ,{
+                    "path" : "department/department",
+                    "style" :
+                {
+                    "navigationBarTitleText": "",
+                    "enablePullDownRefresh": false
+                }
+
+                },{
+			"path": "department/edit",
+			"style": {
+				"navigationBarTitleText": "修改部门",
+				"navigationStyle": "default"
+			}
+		},{
+			"path": "department/add",
+			"style": {
+				"navigationBarTitleText": "新增部门",
+				"navigationStyle": "default"
+			}
+		}
+            ]
 	}, {
 		"root": "pages/demo",
 		"pages": [{

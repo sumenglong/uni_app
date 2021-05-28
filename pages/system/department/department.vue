@@ -2,7 +2,7 @@
 	<view>
 		<view class="uni-header">
 			<view class="uni-group hide-on-phone">
-				<view class="uni-title">角色管理</view>
+				<view class="uni-title">部门</view>
 				<view class="uni-sub-title"></view>
 			</view>
 			<view class="uni-group">
@@ -27,26 +27,20 @@
 				<uni-table :loading="loading" :emptyText="error.message || '没有更多数据'" border stripe type="selection"
 					@selection-change="selectionChange">
 					<uni-tr>
-						<uni-th align="center">角色Id</uni-th>
-						<uni-th align="center">角色名</uni-th>
-						<uni-th align="center">权限</uni-th>
-						<uni-th align="center">备注</uni-th>
-						<uni-th width="170" align="center">创建时间</uni-th>
+						<uni-th align="center">部门编号</uni-th>
+						<uni-th align="center">部门名称</uni-th>
 						<uni-th width="204" align="center">操作</uni-th>
 					</uni-tr>
 					<uni-tr v-for="(item,index) in data" :key="index">
 						<uni-td align="center">{{item.role_id}}</uni-td>
 						<uni-td align="center">{{item.role_name}}</uni-td>
-						<uni-td align="center">{{item.permission}}</uni-td>
-						<uni-td align="center">{{item.comment}}</uni-td>
-						<uni-td align="center">
-							{{item.create_date}}
-						</uni-td>
 						<uni-td align="center">
 							<view v-if="item.role_id === 'admin'">-</view>
 							<view v-else class="uni-group">
-								<button @click="navigateTo('./edit?id='+item._id, false)" class="uni-button" size="mini"
-									type="primary">修改</button>
+								<navigator url="./edit" open-type="navigate">
+									<button class="uni-button" size="mini" type="primary">修改</button>
+								</navigator>
+								<!-- <button @click="navigateTo('./edit?id='+item._id, false)" class="uni-button" size="mini" type="primary">修改</button> -->
 								<button @click="confirmDelete(item.role_id)" class="uni-button" size="mini"
 									type="warn">删除</button>
 							</view>
