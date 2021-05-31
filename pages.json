@@ -47,9 +47,15 @@
                 "enablePullDownRefresh": false
             }
 
+        },{
+            "path" : "pages/item/list",
+            "style" :
+            {
+                "navigationBarTitleText": "",
+                "enablePullDownRefresh": false
+            }
+
         }
-
-
     ],
 	"subPackages": [{
 		"root": "pages/system",
@@ -122,7 +128,7 @@
 				"navigationBarTitleText": "用户管理"
 			}
 		} ,{
-                    "path" : "department/department",
+            "path" : "department/department",
                     "style" :
                 {
                     "navigationBarTitleText": "",
@@ -139,6 +145,26 @@
 			"path": "department/add",
 			"style": {
 				"navigationBarTitleText": "新增部门",
+				"navigationStyle": "default"
+			}
+		},{
+                    "path" : "step/step",
+                    "style" :
+                {
+                    "navigationBarTitleText": "",
+                    "enablePullDownRefresh": false
+                }
+
+                },{
+			"path": "step/edit",
+			"style": {
+				"navigationBarTitleText": "修改流程",
+				"navigationStyle": "default"
+			}
+		},{
+			"path": "step/add",
+			"style": {
+				"navigationBarTitleText": "新增流程",
 				"navigationStyle": "default"
 			}
 		}
