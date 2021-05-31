@@ -7,6 +7,7 @@ module.exports = class MenuController extends Controller {
         this.menuService = this.service.system.menu
     }
     async list() {
+		
         return this.menuService.list()
     }
     async add() {

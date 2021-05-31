@@ -26,9 +26,25 @@
 	export default {
 		data() {
 			return {
-
+				listItem:[]
 			}
 		},
+		onLoad() {
+					uni.getNetworkType()
+					uniCloud.callFunction({
+						name:"item",
+						data:{
+							name:"sml",
+							type:"item_data"
+						},
+						success(res) {
+							console.log(res)
+							this.listItem=res
+						},fail(err) {
+						   console.log(err)
+						}
+					})
+				},
 		methods: {
 
 		}
