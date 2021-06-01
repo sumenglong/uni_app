@@ -2,7 +2,7 @@
 	<view>
 		<view class="uni-header">
 			<view class="uni-group hide-on-phone">
-				<view class="uni-title">任务分配</view>
+				<!-- <view class="uni-title">任务分配</view> -->
 				<view class="uni-sub-title"></view>
 			</view>
 			<view class="uni-group">
@@ -243,5 +243,8 @@
 		color: #fff;
 		border-radius: 3px;
 		padding: 2px 8px;
+	}
+	.uni-header {
+		padding-top: 10px;
 	}
 </style>

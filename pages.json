@@ -43,16 +43,16 @@
             "path" : "pages/item/detail",
             "style" :
             {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
+                "navigationBarTitleText": "分配任务",
+                "navigationStyle": "default"
             }
 
         },{
             "path" : "pages/item/list",
             "style" :
             {
-                "navigationBarTitleText": "",
-                "enablePullDownRefresh": false
+                "navigationBarTitleText": "项目清单",
+                "navigationStyle": "default"
             }
 
         },{
