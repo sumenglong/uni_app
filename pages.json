@@ -55,6 +55,22 @@
                 "enablePullDownRefresh": false
             }
 
+        },{
+            "path" : "pages/item/edit",
+            "style" :
+            {
+                "navigationBarTitleText": "修改任务",
+                "navigationStyle": "default"
+            }
+
+        },{
+            "path" : "pages/item/add",
+            "style" :
+            {
+                "navigationBarTitleText": "新增任务",
+                "navigationStyle": "default"
+            }
+
         }
     ],
 	"subPackages": [{
