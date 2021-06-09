@@ -6,7 +6,6 @@
 				<view class="uni-sub-title"></view>
 			</view>
 			<view class="uni-group">
-				<button class="uni-button" type="primary" size="mini" @click="navigateTo('./add')">新增</button>
 				<button class="uni-button" type="warn" size="mini" @click="delTable"
 					:disabled="!selectedIndexs.length">批量删除</button>
 				<!-- #ifdef H5 -->
@@ -18,15 +17,15 @@
 			</view>
 		</view>
 		<view class="uni-container">
-			<unicloud-db ref="udb" @load="onqueryload" collection="uni-id-roles,uni-id-permissions" :options="options"
-				:where="where" field="role_id,role_name,permission{permission_id,permission_name},comment,create_date"
+			<unicloud-db ref="udb" @load="onqueryload" collection="procedure" :options="options"
+				:where="where" field="procedure_id,procedure_name,comment"
 				page-data="replace" :orderby="orderby" :getcount="true" :page-size="options.pageSize"
 				:page-current="options.pageCurrent" v-slot:default="{data,pagination,loading,error}">
 				<uni-table :loading="loading" :emptyText="error.message || '没有更多数据'" border stripe type="selection"
 					@selection-change="selectionChange">
 					<uni-tr>
-						<uni-th align="center">任务名称</uni-th>
 						<uni-th align="center">类别</uni-th>
+						<uni-th align="center">任务名称</uni-th>
 						<uni-th align="center">人员</uni-th>
 						<uni-th align="center">数量</uni-th>
 						<uni-th align="center">单位</uni-th>
@@ -35,23 +34,17 @@
 						<uni-th width="204" align="center">操作</uni-th>
 					</uni-tr>
 					<uni-tr v-for="(item,index) in data" :key="index">
-						<uni-td align="center">{{item.role_id}}</uni-td>
-						<uni-td align="center">{{item.role_name}}</uni-td>
-						<uni-td align="center">{{item.permission}}</uni-td>
-						<uni-td align="center">{{item.comment}}</uni-td>
-						<uni-td align="center">
-							{{item.create_date}}
-						</uni-td>
-						<uni-td align="center">高</uni-td>
-						<uni-td align="center">完成</uni-td>
+						<uni-td align="center">{{item.procedure_name}}</uni-td>
+						<uni-th v-for="(iteme,index) in item.comment" :key="index" width="170" align="center">{{iteme}}</uni-th>
 						<uni-td align="center">
 							<view v-if="item.role_id === 'admin'">-</view>
 							<view v-else class="uni-group">
+								<button class="uni-button" type="primary" size="mini" @click="navigateTo('./add')">分配</button>
 								<navigator url="./edit" open-type="navigate">
-									<button class="uni-button" size="mini" type="primary">修改</button>
+									<button v-show="item.comment[1].length>0" class="uni-button" size="mini" type="primary">修改</button>
 								</navigator>
 								<!-- <button @click="navigateTo('./edit?id='+item._id, false)" class="uni-button" size="mini" type="primary">修改</button> -->
-								<button @click="confirmDelete(item.role_id)" class="uni-button" size="mini"
+								<button @click="confirmDelete(item.role_id)" v-show="item.comment[1].length>0" class="uni-button" size="mini"
 									type="warn">删除</button>
 							</view>
 						</uni-td>
@@ -96,6 +89,7 @@
 					pageSize,
 					pageCurrent
 				},
+				mainid:"",
 				selectedIndexs: [], //批量选中的项
 				pageSizeIndex: 0,
 				pageSizeOption: [10, 20, 50, 100, 500],
@@ -121,7 +115,14 @@
 				}
 			}
 		},
+		onLoad(e) {
+			const id = e.id
+			this.mainid=id
+			const department=e.department
+			this.where="procedure_department=='"+department+"'"
+		},
 		methods: {
+		
 			selectOne(options) {
 				this.selecValue = options.label
 			},
@@ -132,7 +133,24 @@
 			onqueryload(data, ended) {
 				for (var i = 0; i < data.length; i++) {
 					let item = data[i]
-					item.permission = item.permission.map(pItem => pItem.permission_name).join('、')
+						const dbs = uniCloud.database()
+						dbs.collection('item_task,uni-id-users')
+						  .where('task_item=="'+this.mainid+'" && task_pro=="'+item.procedure_id+'"')
+						  .field('task_pro,unit,number,task_name,difficulty,state,users_id{username}')
+						  .get()
+						  .then(res => {
+							   var ztitle=["","","","","",""]
+							  if(res.result.data.length>0){
+								  const items=res.result.data[0];
+								  ztitle=[items.task_name,items.users_id[0].username,items.number,items.unit,items.difficulty,items.state]
+							  }
+								item.comment=ztitle
+						}).catch(err => {
+						  console.error(err)
+						})
+
+
+
 					item.create_date = this.$formatDate(item.create_date)
 				}
 				this.expData = data //仅导出当前页

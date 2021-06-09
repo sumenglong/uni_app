@@ -20,8 +20,8 @@
 			</view>
 		</view>
 		<view class="uni-container">
-			<unicloud-db ref="udb" @load="onqueryload" collection="uni-id-roles,uni-id-permissions" :options="options"
-				:where="where" field="role_id,role_name,permission{permission_id,permission_name},comment,create_date"
+			<unicloud-db ref="udb" @load="onqueryload" collection="procedure,department" :options="options"
+				:where="where" field="procedure_id,procedure_name,procedure_department{department_id,department_name},comment,create_date"
 				page-data="replace" :orderby="orderby" :getcount="true" :page-size="options.pageSize"
 				:page-current="options.pageCurrent" v-slot:default="{data,pagination,loading,error}">
 				<uni-table :loading="loading" :emptyText="error.message || '没有更多数据'" border stripe type="selection"
@@ -29,25 +29,26 @@
 					<uni-tr>
 						<uni-th align="center">流程编号</uni-th>
 						<uni-th align="center">流程名称</uni-th>
-						<uni-th align="center">所属部门</uni-th>
-						<uni-th align="center">等级权重</uni-th>
-						<uni-th width="170" align="center">说明</uni-th>
+						<uni-th align="center">部门</uni-th>
+						<uni-th align="center">说明</uni-th>
+						<uni-th width="170" align="center">创建时间</uni-th>
 						<uni-th width="204" align="center">操作</uni-th>
 					</uni-tr>
 					<uni-tr v-for="(item,index) in data" :key="index">
-						<uni-td align="center">{{item.role_id}}</uni-td>
-						<uni-td align="center">{{item.role_name}}</uni-td>
-						<uni-td align="center">{{item.permission}}</uni-td>
+						<uni-td align="center">{{item.procedure_id}}</uni-td>
+						<uni-td align="center">{{item.procedure_name}}</uni-td>
+						<uni-td align="center">{{item.procedure_department}}</uni-td>
+						<uni-td align="center">{{item.comment}}</uni-td>
 						<uni-td align="center">{{item.comment}}</uni-td>
 						<uni-td align="center">
 							{{item.create_date}}
 						</uni-td>
 						<uni-td align="center">
-							<view v-if="item.role_id === 'admin'">-</view>
+							<view v-if="item.procedure_id === 'admin'">-</view>
 							<view v-else class="uni-group">
 								<button @click="navigateTo('./edit?id='+item._id, false)" class="uni-button" size="mini"
 									type="primary">修改</button>
-								<button @click="confirmDelete(item.role_id)" class="uni-button" size="mini"
+								<button @click="confirmDelete(item.procedure_id)" class="uni-button" size="mini"
 									type="warn">删除</button>
 							</view>
 						</uni-td>
@@ -76,7 +77,7 @@
 	const db = uniCloud.database()
 	// 表查询配置
 	const dbOrderBy = 'create_date desc' // 排序字段
-	const dbSearchFields = ['role_id', 'role_name'] // 支持模糊搜索的字段列表
+	const dbSearchFields = ['procedure_id', 'procedure_name'] // 支持模糊搜索的字段列表
 	// 分页配置
 	const pageSize = 20
 	const pageCurrent = 1
@@ -99,8 +100,8 @@
 					filename: "角色.xls",
 					type: "xls",
 					json_fields: {
-						"角色Id": "role_id",
-						"角色名称": "role_name",
+						"流程Id": "role_id",
+						"流程名称": "role_name",
 						"备注": "comment",
 						"创建时间": "create_date"
 					}
@@ -120,7 +121,8 @@
 			onqueryload(data, ended) {
 				for (var i = 0; i < data.length; i++) {
 					let item = data[i]
-					item.permission = item.permission.map(pItem => pItem.permission_name).join('、')
+					//console.log(item.procedure_department.department_name)
+					item.procedure_department = item.procedure_department.map(pItem => pItem.department_name).join('、')
 					item.create_date = this.$formatDate(item.create_date)
 				}
 				this.expData = data //仅导出当前页

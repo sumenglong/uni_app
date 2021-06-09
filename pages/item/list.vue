@@ -23,36 +23,44 @@
 			</view>
 		</view>
 		<view class="uni-container">
-			<unicloud-db ref="udb" @load="onqueryload" collection="uni-id-roles,uni-id-permissions" :options="options"
-				:where="where" field="role_id,role_name,permission{permission_id,permission_name},comment,create_date"
+			<unicloud-db ref="udb" @load="onqueryload" collection="item_main" :options="options"
+				:where="where" field="id,name,state,explain,department,remarks,explain,nodetime,ctime"
 				page-data="replace" :orderby="orderby" :getcount="true" :page-size="options.pageSize"
 				:page-current="options.pageCurrent" v-slot:default="{data,pagination,loading,error}">
 				<uni-table :loading="loading" :emptyText="error.message || '没有更多数据'" border stripe type="selection"
 					@selection-change="selectionChange">
 					<uni-tr>
+						<uni-th align="center"></uni-th>
+						<uni-th align="center"></uni-th>
+
+						<uni-th v-for="(itemd,index) in department" :key="index"  width="170" align="center" colspan="4">{{itemd.procedure_name}}</uni-th>
+						<uni-th align="center"></uni-th>
+						<uni-th align="center"></uni-th>
+						<uni-th align="center"></uni-th>
+						<uni-th width="204" align="center">操作</uni-th>
+					</uni-tr>
+					<uni-tr>
 						<uni-th align="center">项目编号</uni-th>
 						<uni-th align="center">名称</uni-th>
-						<uni-th align="center">完成时间</uni-th>
-						<uni-th align="center">部门流程</uni-th>
-						<uni-th width="170" align="center">说明</uni-th>
-						<uni-th align="center">是否验收</uni-th>
+						<uni-th v-for="(itemt,index) in listtitlename" :key="index" width="170" align="center">{{itemt}}</uni-th>
 						<uni-th align="center">节点时间</uni-th>
+						<uni-th align="center">是否验收</uni-th>
+						<uni-th align="center">创建时间</uni-th>
 						<uni-th width="204" align="center">操作</uni-th>
 					</uni-tr>
 					<uni-tr v-for="(item,index) in data" :key="index">
-						<uni-td align="center">{{item.role_id}}</uni-td>
-						<uni-td align="center">{{item.role_name}}</uni-td>
-						<uni-td align="center">{{item.permission}}</uni-td>
-						<uni-td align="center">{{item.comment}}</uni-td>
-						<uni-td align="center">
-							{{item.create_date}}
-						</uni-td>
-						<uni-td align="center">是</uni-td>
-						<uni-td align="center">2021年05月22号</uni-td>
+						<uni-td align="center">{{item.id}}</uni-td>
+						<uni-td align="center">{{item.name}}</uni-td>
+						<uni-th v-for="(iteme,index) in item.explain" :key="index" width="170" align="center">{{iteme}}</uni-th>
+						<uni-td align="center">{{item.nodetime}}</uni-td>
+						<uni-td align="center">{{item.state}}</uni-td>
+						<uni-td align="center">{{item.ctime}}</uni-td>
+
+
 						<uni-td align="center">
 							<view v-if="item.role_id === 'admin'">-</view>
 							<view v-else class="uni-group">
-								<navigator url="./detail" size="mini" type="primary" class="uni-button2">分配任务</navigator>
+								<navigator @click="detail(item.id,item.department)" size="mini" type="primary" class="uni-button2">分配任务</navigator>
 								<!-- <button @click="navigateTo('./edit?id='+item._id, false)" class="uni-button" size="mini" type="primary">分配任务</button> -->
 								<!-- <button @click="confirmDelete(item.role_id)" class="uni-button" size="mini"
 									type="warn">删除</button> -->
@@ -99,6 +107,8 @@
 					pageSize,
 					pageCurrent
 				},
+				department:[],
+				listtitlename:[],
 				selectedIndexs: [], //批量选中的项
 				pageSizeIndex: 0,
 				pageSizeOption: [10, 20, 50, 100, 500],
@@ -124,7 +134,49 @@
 				}
 			}
 		},
+		onLoad(e) {
+			const id = e.id
+			this.where="parent=='"+id+"'"
+			this.getDetail(id)
+		},
 		methods: {
+			detail(itmeid,department){
+				uni.navigateTo({
+						url:"./detail?id="+itmeid+"&department="+department
+						})
+			},
+			getDetail(id) {
+				const dbs = uniCloud.database()
+				dbs.collection('item_main')
+				  .where('id=="001001"')
+				  .field('name,department')
+				  .get()
+				  .then(res => {
+
+					 this.wer(res.result.data[0].department)
+				  }).catch(err => {
+				    console.error(err)
+				  })
+
+			},
+			wer(z){
+				const dbs = uniCloud.database()
+				dbs.collection('procedure')
+				  .where('procedure_department == "'+z+'"')
+				  .field('procedure_id,procedure_name')
+				  .orderBy('procedure_id')
+				  .get()
+				  .then(res => {
+				    this.department=res.result.data;
+					const list=["名称","数量","难度","人员"]
+					for(var i=0;i<res.result.data.length;i++){
+						this.listtitlename=this.listtitlename.concat(list)
+					}
+
+				  }).catch(err => {
+				    console.error(err)
+				  })
+			},
 			selectOne(options) {
 				this.selecValue = options.label
 			},
@@ -135,11 +187,50 @@
 			onqueryload(data, ended) {
 				for (var i = 0; i < data.length; i++) {
 					let item = data[i]
-					item.permission = item.permission.map(pItem => pItem.permission_name).join('、')
-					item.create_date = this.$formatDate(item.create_date)
+					//console.log(JSON.stringify(item.id))
+					var ztitles=[]
+						const dbs = uniCloud.database()
+						dbs.collection('item_task,uni-id-users')
+						  .where('task_item=="'+item.id+'"')
+						  .field('task_pro,unit,number,task_name,difficulty,users_id{username}')
+						  .get()
+						  .then(res => {
+							  ztitles=[]
+							for(var i = 0; i <this.department.length; i++){
+								const xx=0
+
+								for(var j = 0; j <res.result.data.length; j++){
+									var dp=JSON.stringify(this.department[i].procedure_id)
+									var ut=JSON.stringify(res.result.data[j].task_pro)
+								if(dp==ut){
+									xx=1
+									const item=res.result.data[j];
+									const ztitle=[item.task_name,item.number+item.unit,item.difficulty,item.users_id[0].username]
+									ztitles=ztitles.concat(ztitle)
+								}
+								}
+								if(xx==0){
+									const ztitle=["","","",""]
+									ztitles=ztitles.concat(ztitle)
+								}
+
+							}
+								item.explain=ztitles
+						  }).catch(err => {
+							console.error(err)
+						  })
+					 console.log("tasks:"+JSON.stringify(item.explain))
+					//item.permission = item.permission.map(pItem => pItem.permission_name).join('、')
+					item.nodetime = this.$formatDate(item.nodetime)
+					item.ctime = this.$formatDate(item.ctime)
 				}
 				this.expData = data //仅导出当前页
 			},
+			gettask(id) {
+
+
+			},
+
 			changeSize(e) {
 				this.pageSizeIndex = e.detail.value
 			},

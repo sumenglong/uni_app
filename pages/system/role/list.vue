@@ -140,6 +140,7 @@
 				const newWhere = this.getWhere()
 				const isSameWhere = newWhere === this.where
 				this.where = newWhere
+			
 				if (isSameWhere) { // 相同条件时，手动强制刷新
 					this.loadData()
 				}

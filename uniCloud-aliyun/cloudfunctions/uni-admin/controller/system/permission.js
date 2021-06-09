@@ -6,7 +6,6 @@ module.exports = class PermissionController extends Controller {
 		const {
 			id
 		} = this.ctx.data
-
 		return this.ctx.uniID.deletePermission({
 			permissionID: id
 		})

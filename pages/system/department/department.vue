@@ -15,13 +15,15 @@
 				<download-excel class="hide-on-phone" :fields="expExcel.json_fields" :data="expData"
 					:type="expExcel.type" :name="expExcel.filename">
 					<button class="uni-button" type="primary" size="mini">导出 Excel</button>
+
 				</download-excel>
+				<!-- <button  class="uni-button"  @click="sayHello()">ceshi</button> -->
 				<!-- #endif -->
 			</view>
 		</view>
 		<view class="uni-container">
-			<unicloud-db ref="udb" @load="onqueryload" collection="uni-id-roles,uni-id-permissions" :options="options"
-				:where="where" field="role_id,role_name,permission{permission_id,permission_name},comment,create_date"
+			<unicloud-db ref="udb" @load="onqueryload" collection="department" :options="options"
+				:where="where" field="department_id,department_name,comment,create_date"
 				page-data="replace" :orderby="orderby" :getcount="true" :page-size="options.pageSize"
 				:page-current="options.pageCurrent" v-slot:default="{data,pagination,loading,error}">
 				<uni-table :loading="loading" :emptyText="error.message || '没有更多数据'" border stripe type="selection"
@@ -29,19 +31,25 @@
 					<uni-tr>
 						<uni-th align="center">部门编号</uni-th>
 						<uni-th align="center">部门名称</uni-th>
+						
+						<uni-th width="170" align="center">说明</uni-th>
+						<uni-th width="204" align="center">创建时间</uni-th>
 						<uni-th width="204" align="center">操作</uni-th>
 					</uni-tr>
+
 					<uni-tr v-for="(item,index) in data" :key="index">
-						<uni-td align="center">{{item.role_id}}</uni-td>
-						<uni-td align="center">{{item.role_name}}</uni-td>
+						<uni-td align="center">{{item.department_id}}</uni-td>
+						<uni-td align="center">{{item.department_name}}</uni-td>
+						<uni-td align="center">{{item.comment}}</uni-td>
 						<uni-td align="center">
-							<view v-if="item.role_id === 'admin'">-</view>
+							{{item.create_date}}
+						</uni-td>
+						<uni-td align="center">
+							<view v-if="item.department_id === 'admin'">-</view>
 							<view v-else class="uni-group">
-								<navigator url="./edit" open-type="navigate">
-									<button class="uni-button" size="mini" type="primary">修改</button>
-								</navigator>
-								<!-- <button @click="navigateTo('./edit?id='+item._id, false)" class="uni-button" size="mini" type="primary">修改</button> -->
-								<button @click="confirmDelete(item.role_id)" class="uni-button" size="mini"
+								<button @click="navigateTo('./edit?id='+item._id, false)" class="uni-button" size="mini"
+									type="primary">修改</button>
+								<button @click="confirmDelete(item.department_id)" class="uni-button" size="mini"
 									type="warn">删除</button>
 							</view>
 						</uni-td>
@@ -70,7 +78,7 @@
 	const db = uniCloud.database()
 	// 表查询配置
 	const dbOrderBy = 'create_date desc' // 排序字段
-	const dbSearchFields = ['role_id', 'role_name'] // 支持模糊搜索的字段列表
+	const dbSearchFields = ['department_id', 'department_name'] // 支持模糊搜索的字段列表
 	// 分页配置
 	const pageSize = 20
 	const pageCurrent = 1
@@ -90,11 +98,11 @@
 				pageSizeOption: [10, 20, 50, 100, 500],
 				expData: [],
 				expExcel: {
-					filename: "角色.xls",
+					filename: "部门.xls",
 					type: "xls",
 					json_fields: {
-						"角色Id": "role_id",
-						"角色名称": "role_name",
+						"部门Id": "department_id",
+						"部门名称": "department_name",
 						"备注": "comment",
 						"创建时间": "create_date"
 					}
@@ -114,10 +122,26 @@
 			onqueryload(data, ended) {
 				for (var i = 0; i < data.length; i++) {
 					let item = data[i]
-					item.permission = item.permission.map(pItem => pItem.permission_name).join('、')
+					//console.log(item.procedure)
+					//item.procedure = item.procedure.map(pItem => pItem.procedure_name).join('、')
+					//console.log("q:"+item.procedure)
 					item.create_date = this.$formatDate(item.create_date)
 				}
-				this.expData = data //仅导出当前页
+				//this.expData = data //仅导出当前页
+			},
+			async sayHello() {
+			/* 	await this.$request('system/department/sayHello',
+				{},
+				).then(res => {
+						console.log("1:"+JSON.stringify(res.data))
+					}).catch(err => {
+						console.log("2:"+JSON.stringify(res.data))
+					}).finally(err => {
+						console.log("3:"+JSON.stringify(res.data))
+					}) */
+			await this.$request('system/department/sayHello', {}).then(res => {
+				console.log("1:"+JSON.stringify(res.data))
+			  })
 			},
 			changeSize(e) {
 				this.pageSizeIndex = e.detail.value
@@ -159,7 +183,7 @@
 			// 多选处理
 			selectedItems() {
 				var dataList = this.$refs.udb.dataList
-				return this.selectedIndexs.map(i => dataList[i].role_id)
+				return this.selectedIndexs.map(i => dataList[i].department_id)
 			},
 			//批量删除
 			delTable() {
@@ -205,8 +229,8 @@
 					})
 				this.loadData(false)
 			},
-			praseRoleArr(permission) {
-				return permission ? permission.map(pItem => pItem.permission_name).join('、') : '-'
+			praseRoleArr(procedure) {
+				return procedure ? procedure.map(pItem => pItem.procedure_name).join('、') : '-'
 			}
 		}
 	}

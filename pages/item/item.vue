@@ -12,11 +12,7 @@
 		</view>
 		<view class="uni-container">
 			<uni-list>
-			    <uni-list-item title="柳州科技馆柳州科技馆柳州科技馆" link to="/pages/item/list" rightText="2021年4月22日"></uni-list-item>
-			    <uni-list-item title="遂宁展馆遂宁展馆遂宁展馆遂宁展馆" link to="/pages/item/list" rightText="2021年4月20日"></uni-list-item>
-			    <uni-list-item title="咸阳市科技馆咸阳市科技馆咸阳市科技馆" link to="/pages/item/list" rightText="2021年4月19日"></uni-list-item>
-			    <uni-list-item title="宝鸡市科技馆宝鸡市科技馆宝鸡市科技馆" link to="/pages/item/list" rightText="2021年4月18日"></uni-list-item>
-			    <uni-list-item title="四川省科技馆四川省科技馆四川省科技馆四川省科技馆" link to="/pages/item/list" rightText="2021年4月17日"></uni-list-item>
+			    <uni-list-item v-for="(item,index) in listItem" :key="index" :title="item.name"  @click="gggg(item)" :rightText="item.nodetime" link></uni-list-item>
 			</uni-list>
 		</view>
 	</view>
@@ -36,17 +32,31 @@
 						data:{
 							name:"sml",
 							type:"item_data"
-						},
-						success(res) {
-							console.log(res)
-							this.listItem=res
-						},fail(err) {
-						   console.log(err)
 						}
+					}).then(res => {
+
+						const list=res.result.data
+						for(var i=0;i<list.length;i++){
+							var date = new Date(list[i].nodetime);
+							var year = date.getFullYear();
+							var mon  = date.getMonth()+1;
+							var day  = date.getDate();
+							var hours = date.getHours();
+							var minu = date.getMinutes();
+							var sec = date.getSeconds();
+							var trMon = mon<10 ? '0'+mon : mon
+							var trDay = day<10 ? '0'+day : day
+							list[i].nodetime=year+'-'+trMon+'-'+trDay
+						}
+						this.listItem=list
 					})
 				},
 		methods: {
-
+		gggg(gg){
+			 uni.navigateTo({
+								url:"/pages/item/list?id="+gg.id
+							})
+			}
 		}
 	}
 </script>
