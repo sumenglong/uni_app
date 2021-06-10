@@ -219,7 +219,7 @@
 						  }).catch(err => {
 							console.error(err)
 						  })
-					 console.log("tasks:"+JSON.stringify(item.explain))
+					// console.log("tasks:"+JSON.stringify(item.explain))
 					//item.permission = item.permission.map(pItem => pItem.permission_name).join('、')
 					item.nodetime = this.$formatDate(item.nodetime)
 					item.ctime = this.$formatDate(item.ctime)
